@@ -26,25 +26,48 @@ class Solution {
         answer = StringBuilder().append(list.toCharArray()).toString()
         return answer
     }
+
     // 올바른 괄호인지 판별하는 함수
     fun goodBracket(s: String):Boolean{
         var answer = true
         //스택으로 만들어서 만약 스택값이 비어있으면 올바른 괄호
         var stack = Stack<Char>()
-        stack.push(s[0])
-        for(i in 1..s.lastIndex){
-            stack.push(s[i])
-            //괄호가 맞냐 판별
-            if(isBracket(s[i-1],s[i])){
-                //올바른 괄호가있으면 stack 에서 빼자
-                stack.pop()
-                stack.pop()
+        //이때 문자열 갯수만 반복하는게 아니라 다시 recount해야한다!
+//        for(i in 1..s.lastIndex){
+//            stack.push(s[i])
+//            //괄호가 맞냐 판별
+//            if(isBracket(s[i-1],s[i])){
+//                //올바른 괄호가있으면 stack 에서 빼자
+//                stack.pop()
+//                stack.pop()
+//            }
+//        }
+        var index = 0
+        var listStr = s.toMutableList()
+        //list 값에서 올바른 문자열 괄호가 만들어질떄,같이 제거하고 만약 stack이랑 크기같아지면 break?
+        while(stack.size!=listStr.size){
+            stack.push(listStr[index])
+            if(index==0) {
+                index++
+                continue
             }
+            //괄호가 맞냐 판별
+            if(isBracket(listStr[index-1],listStr[index])){
+                //올바른 괄호가 있으면 stack에서 빼자
+                stack.pop()
+                listStr.removeAt(index--)
+                stack.pop()
+                listStr.removeAt(index--)
+            }
+            index++
+
         }
         if(stack.isNotEmpty()) answer = false
 
         return answer
     }
+
+    //두 문자를 합쳐서 괄호가 되는가?
     fun isBracket(c1:Char,c2:Char):Boolean{
         var answer = false
         var s= c1.toString() + c2.toString()
@@ -54,6 +77,8 @@ class Solution {
 
         return answer
     }
+
+
     fun solution(s: String): Int {
         var answer: Int = 0
         var str = s
