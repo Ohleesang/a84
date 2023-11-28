@@ -7,18 +7,68 @@
  * 올바른 괄호 문자열의 수를 return
  */
 
+import java.util.Stack
+
 const val BIG ="[]"
 const val MIDDLE ="{}"
 const val SMALL ="()"
 
 class Solution {
+    // 한칸씩 미루는 함수(<<)
+    fun pushStr(s: String):String{
+        var answer =""
+
+        //List 로 치환 이후,마지막 인자값을 첫번째로 옮긴다.
+        var list = s.toMutableList()
+        var first_char = s.first()
+        list.removeFirst()
+        list.add(first_char)
+        answer = StringBuilder().append(list.toCharArray()).toString()
+        return answer
+    }
+    // 올바른 괄호인지 판별하는 함수
+    fun goodBracket(s: String):Boolean{
+        var answer = true
+        //스택으로 만들어서 만약 스택값이 비어있으면 올바른 괄호
+        var stack = Stack<Char>()
+        stack.push(s[0])
+        for(i in 1..s.lastIndex){
+            stack.push(s[i])
+            //괄호가 맞냐 판별
+            if(isBracket(s[i-1],s[i])){
+                //올바른 괄호가있으면 stack 에서 빼자
+                stack.pop()
+                stack.pop()
+            }
+        }
+        if(stack.isNotEmpty()) answer = false
+
+        return answer
+    }
+    fun isBracket(c1:Char,c2:Char):Boolean{
+        var answer = false
+        var s= c1.toString() + c2.toString()
+        if(s==BIG) answer = true
+        if(s==MIDDLE) answer = true
+        if(s==SMALL) answer = true
+
+        return answer
+    }
     fun solution(s: String): Int {
-        var answer: Int = -1
+        var answer: Int = 0
+        var str = s
+        var list = mutableMapOf<String,Boolean>()
+        for(i in 1..s.length){
+            if(goodBracket(str)) answer++
+            list.put(str,goodBracket(str))
+            str = pushStr(str)
+        }
         return answer
     }
 }
 fun main(){
     var a = Solution()
+
     a.solution("[](){}")//3
     a.solution("}]()[{")//2
     a.solution("[)(]")//0
